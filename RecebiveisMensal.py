@@ -110,8 +110,7 @@ def refresh_access_token(refresh_token):
 # --------------------------------------------------------------------------- #
 def process_company(companyNumber, data, url,
                     access_token, refresh_token,
-                    driver, server, database, user, password, port,
-                    insertion_date):
+                    driver, server, database, user, password, port):
     connection = create_connection(driver, server, database, user, password,
                                    port)
     if not connection:
@@ -155,8 +154,7 @@ def process_company(companyNumber, data, url,
                 else:
                     amount = total = 0
                 insert_data(connection, startdate, enddate,
-                            companyNumber, amount, total,
-                            insertion_date)
+                            companyNumber, amount, total)
                 print("Valores inseridos para a empresa",
                       companyNumber, "RM")
 
@@ -210,7 +208,6 @@ def job():
                       if num.strip()]
 
     data_base = datetime.datetime.now()
-    insertion_date = datetime.datetime.now()  # mesmo timestamp para a execução
 
     max_workers = max(1, (os.cpu_count() or 2) - 1)
     with concurrent.futures.ThreadPoolExecutor(
@@ -224,8 +221,7 @@ def job():
                 access_token,
                 refresh_token,
                 driver, server, database,
-                user, password, port,
-                insertion_date               
+                user, password, port          
             ) for companyNumber in companyNumbers
         ]
         for future in concurrent.futures.as_completed(futures):
